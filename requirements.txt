@@ -4,5 +4,5 @@ numpy==2.3.1
 opencv_python==4.11.0.86
 Pillow==11.3.0
 streamlit==1.46.0
-tensorflow==2.19.0
+tensorflow==2.16.1
 uform==3.1.2
