@@ -40,7 +40,6 @@ def get_face_embedding(faces, names):
     
     return d, fs
     
-@st.cache_data
 def prepare_data(source,text):
     processors, models = get_model('unum-cloud/uform3-image-text-english-small')
     model_text = models[Modality.TEXT_ENCODER]
