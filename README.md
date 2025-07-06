@@ -10,6 +10,7 @@
 - *Nguồn dataset*:  (https://www.pexels.com/vi-vn/tim-kiem/phong%20c%E1%BA%A3nh/)
                   (https://www.gettyimages.com/photos/elon-musk)
                   (https://www.pexels.com/search/animal/)
+                  (https://pixabay.com/images/search/girl/)
 
 ## Model
 - *Thư viện sử dụng*:
