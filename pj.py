@@ -80,7 +80,9 @@ def visualize():
         file = st.file_uploader('Upload Images', type = 'ZIP', accept_multiple_files= True)
         if file: 
             source, data = zip(file) 
+    
     st.title('🗿Image Search')
+    
     if not file:
         st.text('👈 Please upload your images')
     else:
@@ -103,7 +105,42 @@ def visualize():
                         count0 -= 1
             if bool1: 
                 st.warning("WARNING: Your ZIP file contains some non-image files.")
+        
         t1,t2 = st.tabs(['🙂 Face Search', '📄 Text Search'])
+
+        with t2:
+            c1,c2 = st.columns(2)
+            with c1:
+                text = st.text_area('Image Description')
+            with c2:
+                sim2 = st.slider("Level of Similarity(%)", key = 2, min_value = 10, max_value = 99, value = 70)
+            if text:
+                info, text_embedding = prepare_data(source, text)
+                c_1,c_2,c_3 = st.columns(3)
+                count2 = 0
+                zip_buffer2 = io.BytesIO()   
+                with ZipFile(zip_buffer2, "w", zipfile.ZIP_DEFLATED) as zip_file:
+                    c = False
+                    k = 0
+                    for i in info:
+                        s = text_search(np.array(i[0]), np.array(text_embedding))*100
+                        if s >= sim2:
+                            count2 += 1
+                            if count2 in list(range(1, len(info) + 1, 3)):
+                                with c_1: st.image(i[1], width = 200, caption = f"{int(s)}%")
+                            elif count2 in list(range(2, len(info) + 2, 3)):
+                                with c_2: st.image(i[1], width = 200, caption = f"{int(s)}%")
+                            else:
+                                with c_3: st.image(i[1], width = 200, caption = f"{int(s)}%")
+                            zip_file.writestr(i[1], data[k])
+                            c = True
+                        k += 1
+                if c:
+                    if st.download_button("Tải về file ZIP", data=zip_buffer2.getvalue(), file_name="found_images.zip", key = '11'):
+                        st.success('Downloaded Images')
+                        st.balloons()
+                else: st.info('Not found')
+
         with t1:
             col1, col2 = st.columns(2)
             with col1:
@@ -150,37 +187,7 @@ def visualize():
                 if b:
                     if st.download_button("Tải về file ZIP", data=zip_buffer1.getvalue(), file_name="found_images.zip", key = '10'):
                         st.success('Downloaded Images')
+                else: st.info('Not found')
 
-        with t2:
-            c1,c2 = st.columns(2)
-            with c1:
-                text = st.text_area('Image Description')
-            with c2:
-                sim2 = st.slider("Level of Similarity(%)", key = 2, min_value = 10, max_value = 99, value = 70)
-            if text:
-                info, text_embedding = prepare_data(source, text)
-                c_1,c_2,c_3 = st.columns(3)
-                count2 = 0
-                zip_buffer2 = io.BytesIO()   
-                with ZipFile(zip_buffer2, "w", zipfile.ZIP_DEFLATED) as zip_file:
-                    c = False
-                    k = 0
-                    for i in info:
-                        s = text_search(np.array(i[0]), np.array(text_embedding))*100
-                        if s >= sim2:
-                            count2 += 1
-                            if count2 in list(range(1, len(info) + 1, 3)):
-                                with c_1: st.image(i[1], width = 200, caption = f"{int(s)}%")
-                            elif count2 in list(range(2, len(info) + 2, 3)):
-                                with c_2: st.image(i[1], width = 200, caption = f"{int(s)}%")
-                            else:
-                                with c_3: st.image(i[1], width = 200, caption = f"{int(s)}%")
-                            zip_file.writestr(i[1], data[k])
-                            c = True
-                        k += 1
-                if c:
-                    if st.download_button("Tải về file ZIP", data=zip_buffer2.getvalue(), file_name="found_images.zip", key = '11'):
-                        st.success('Downloaded Images')
-                        st.balloons()
                 
 visualize()
