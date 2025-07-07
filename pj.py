@@ -29,11 +29,13 @@ def get_face_embedding(faces, names):
                     except Exception as e:
                         continue
                     else:
+                        s = []
                         for ref in ref_embedding:
                             f = face_embedding['embedding']
                             r = ref['embedding']
                             sim = round(float(np.dot(f, r))/(np.linalg.norm(f)*np.linalg.norm(r)), 2)
-                            d.append([sim, name[n], loop1, n + len(names[max(0,loop2-1)])*min(1,loop2) - 1])
+                            s.append(sim)
+                        d.append([max(s), name[n], loop1, n + (sum(len(names[max(0,l-1)][:-1]) for l in range(loop2)))*min(1,loop2)])
 
     except Exception as e:
         st.error(f"ERROR: {str(e)}")
@@ -90,17 +92,18 @@ def visualize():
             bool1 = False  
             count0 = 0
             colu1,colu2,colu3 = st.columns(3)
-            for i in source:
-                for ii in i[:-1]:
+            for numb, i in enumerate(source):
+                for numbb, ii in enumerate(i[:-1]):
                     try:                            
                         count0 += 1
-                        if count0 in list(range(1, len(source[0])*len(source) + 1, 3)):
+                        if count0 in list(range(1, sum(len(a) for a in source) + 1, 3)):
                             with colu1: st.image(ii, width = 150, caption = f'{Path(ii).stem} from {i[-1]}')
-                        elif count0 in list(range(2, len(source[0])*len(source) + 2, 3)):
+                        elif count0 in list(range(2, sum(len(a) for a in source) + 2, 3)):
                             with colu2: st.image(ii, width = 150, caption = f'{Path(ii).stem} from {i[-1]}')
                         else:
                             with colu3: st.image(ii, width = 150, caption = f'{Path(ii).stem} from {i[-1]}')
-                    except: 
+                    except:
+                        source[numb].pop(numbb) 
                         bool1 = True
                         count0 -= 1
             if bool1: 
@@ -121,8 +124,7 @@ def visualize():
                 zip_buffer2 = io.BytesIO()   
                 with ZipFile(zip_buffer2, "w", zipfile.ZIP_DEFLATED) as zip_file:
                     c = False
-                    k = 0
-                    for i in info:
+                    for k, i in enumerate(info):
                         s = text_search(np.array(i[0]), np.array(text_embedding))*100
                         if s >= sim2:
                             count2 += 1
@@ -173,7 +175,7 @@ def visualize():
                                 with co2: st.image(i[1], width = 150, caption = f"{int(i[0]*100)}% compared to input image {i[2]+1}")
                             else: 
                                 with co3: st.image(i[1], width = 150, caption = f"{int(i[0]*100)}% compared to input image {i[2]+1}")
-                            zip_file.writestr(i[1], data[i[-1]])
+                            zip_file.writestr(i[1], data[i[-1] + 1])
                             b = True
                 with st.sidebar:
                     for num, face in enumerate(faces):
