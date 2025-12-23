@@ -1,4 +1,4 @@
-# **Image-search-system-using-facial-and-text-recognition.**
+# **Image-search-system-using-facial-and-text-recognition**
 
 ## Capacity
 - *Tính năng chính*: Nhận diện và tìm kiếm hình ảnh thông qua khuôn mặt và văn bản nhập vào
